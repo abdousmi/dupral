@@ -1,0 +1,20 @@
+<?php
+/**
+ * Implementation de la  formulaire_block()
+ */
+function formulaire_block_info() {
+    $block['formulaire_block'] = array(
+        'info' => 'Bonjour tout le monde!',
+    );
+    return $block;
+}
+/**
+ * Implementation de la  formulaire_block_view()
+ */
+function formulaire_block_view($delta = '') {
+    $block = array(
+        'subject' => 'Mon module:',
+        'content' => 'Bonjour tout le monde !!'
+    );
+    return $block;
+}

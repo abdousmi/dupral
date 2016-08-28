@@ -1,0 +1,367 @@
+<?php
+
+/**
+ * @file
+ *  Provide UI function for settings methods forms and UI features
+ */
+
+define('COMMERCE_PAYLINE_PRODUCTION_URL', 'https://admin.payline.com/magic.do');
+define('COMMERCE_PAYLINE_HOMOLOGATION_URL', 'https://homologation-admin.payline.com/magic.do');
+define('COMMERCE_PAYLINE_GET_DATEFORMAT', 'Ymd:Hi');
+define('COMMERCE_PAYLINE_TRANSACTION_SEARCH_INTERVAL', 300);
+define('COMMERCE_PAYLINE_TRANSACTION_SEARCH_REQCODE', 'searchTransaction');
+
+/**
+ * Implements hook_init().
+ */
+function commerce_paylinebymonext_ui_init() {
+  if (user_access('administer payment methods') && variable_get('commerce_paylinebymonext_method_reset', null)) {
+    drupal_set_message('You need to reconfigure all your payline method payment as an update has been done', 'warning');
+  }
+}
+
+/**
+ * Implements hook_menu().
+ */
+function commerce_paylinebymonext_ui_menu() {
+  $items = array();
+  // internal path for transaction refund operation
+  $items['admin/commerce/orders/%commerce_order/payment/%commerce_payment_transaction/payline_refund'] = array(
+    'title' => 'Refund (Payline)',
+    'page callback' => 'commerce_paylinebymonext_ui_transaction_refund_form_wrapper',
+    'page arguments' => array(3, 5),
+    'access callback' => 'commerce_paylinebymonext_ui_transaction_access',
+    'access arguments' => array('refund', 5),
+    'type' => MENU_LOCAL_TASK,
+    'context' => MENU_CONTEXT_INLINE,
+    'weight' => 10,
+    'file' => 'includes/commerce_paylinebymonext_ui.admin.inc',
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_form_ID_alter
+ *  Alter the rules ui edit element form if it's a enable payline payment method element
+ *  Add specific validate and submit function
+ *  Add ajax support for auto setting contracts fields
+ *
+ * @param array $form
+ * @param array $form_state
+ * @see commerce_paylinebymonext_ui_form_reformat()
+ *  ajax callback function for the form
+ * @see commerce_paylinebymonext_ui_settings_form()
+ *  payline payment methods main form generation function
+ */
+function commerce_paylinebymonext_ui_form_rules_ui_edit_element_alter(&$form, &$form_state) {
+  if (isset($form['parameter']['payment_method']) && ($form['parameter']['payment_method']['settings']['payment_method']['method_id']['#value'] == 'payline_wp' || $form['parameter']['payment_method']['settings']['payment_method']['method_id']['#value'] == 'payline_sa_wp')) {
+    $form['#validate'][] = 'commerce_paylinebymonext_ui_settings_form_validate';
+    $form['#submit'][] = 'commerce_paylinebymonext_ui_settings_form_submit';
+    // disable the submit button until form is full loaded.
+    $form['submit']['#access'] = FALSE;
+    // Store internals contracts list already setted
+    if (isset($form['parameter']['payment_method']['settings']['payment_method']['settings']['contracts']['sellpoints']) && !empty($form['parameter']['payment_method']['settings']['payment_method']['settings']['contracts']['sellpoints'])) {
+      $form_state['paylinebymonext']['storage']['internal_contracts'] = $form['parameter']['payment_method']['settings']['payment_method']['settings']['contracts']['sellpoints'];
+    }
+    // if we are on edit mode, get the remote info about contracts from payline servers
+    if (!empty($form['parameter']['payment_method']['settings']['payment_method']['settings']['access']['merchant_id']['#default_value'])
+      && !isset($form_state['paylinebymonext']['storage']['fullassist'])
+    ) {
+      module_load_include('inc', 'commerce_paylinebymonext', 'includes/commerce_paylinebymonext.contracts');
+      $params = commerce_paylinebymonext_contracts_prepare_params($form);
+      $remote_info = commerce_paylinebymonext_contracts_remote_call($params['method_id'], $params);
+      $virtual_contracts_fields = commerce_paylinebymonext_ui_contracts_virtual_fields($remote_info);
+    }
+    // sync internal settings and remote informations
+    if (isset($virtual_contracts_fields) && isset($form_state['paylinebymonext']['storage']['internal_contracts'])) {
+      foreach ($virtual_contracts_fields as $keySellPoint => $contracts_type ) {
+        foreach ($contracts_type as $type => $fieldset) {
+          if (!isset($form_state['paylinebymonext']['storage']['internal_contracts'][$keySellPoint][$type])) {
+            $form_state['paylinebymonext']['storage']['internal_contracts'][$keySellPoint][$type] = $fieldset;
+          } else {
+            $form_state['paylinebymonext']['storage']['internal_contracts'][$keySellPoint][$type]['contract_number'] = $fieldset['contract_number'];
+          }
+        }
+      }
+      foreach ($form_state['paylinebymonext']['storage']['internal_contracts'] as $keySellPoint => $contracts_type) {
+        foreach ($contracts_type as $type => $fieldset) {
+          if (!isset($virtual_contracts_fields[$keySellPoint][$type])) {
+            unset($form_state['paylinebymonext']['storage']['internal_contracts'][$keySellPoint][$type]);
+          }
+        }
+      }
+      $form['parameter']['payment_method']['settings']['payment_method']['settings']['contracts']['sellpoints'] = $form_state['paylinebymonext']['storage']['internal_contracts'];
+    }
+    // check if remote info from paylines for contracts are available in the form_state array or direct in form
+    if ((isset($form_state['paylinebymonext']['storage']['fullassist'])
+        && !empty($form_state['paylinebymonext']['storage']['fullassist']))
+        || ((isset($remote_info) && !empty($remote_info) ))) {
+      // reformat some form's fields as new informations are available
+      $form['parameter']['payment_method']['settings']['payment_method']['settings']['access']['#collapsed'] = TRUE;
+      unset($form['parameter']['payment_method']['settings']['payment_method']['settings']['payline_step_check']);
+      $form['parameter']['payment_method']['settings']['payment_method']['settings']['contracts']['#access'] = TRUE;
+      $form['parameter']['payment_method']['settings']['payment_method']['settings']['contracts']['sellpoint']['#access'] = TRUE;
+      $form['parameter']['payment_method']['settings']['payment_method']['settings']['contracts']['#description'] = t('Welcome in the assist payline contracts configuration form');
+      $form['parameter']['payment_method']['settings']['payment_method']['settings']['contracts']['sellpoint']['#description'] = t('First, select your Point of Sell');
+      if (isset($form_state['paylinebymonext']['storage']['fullassist'])) {
+        $remote_info = $form_state['paylinebymonext']['storage']['fullassist'];
+        if (!isset($virtual_contracts_fields)) {
+          $virtual_contracts_fields = commerce_paylinebymonext_ui_contracts_virtual_fields($remote_info);
+        }
+      }
+      // format the sellpoint select field
+      $sellPoints = commerce_paylinebymonext_ui_sellpoints_list($remote_info);
+      $form['parameter']['payment_method']['settings']['payment_method']['settings']['contracts']['sellpoint']['#options'] = $sellPoints;
+      if ($form['parameter']['payment_method']['settings']['payment_method']['settings']['contracts']['sellpoint']['#default_value'] < 0) {
+        $form['parameter']['payment_method']['settings']['payment_method']['settings']['contracts']['sellpoint']['#default_value'] = isset($form_state['values']['parameter']['payment_method']['settings']['payment_method']['settings']['contracts']['sellpoint']) ? $form_state['values']['parameter']['payment_method']['settings']['payment_method']['settings']['contracts']['sellpoint'] : -1;
+      }
+      // check if all informations are now ok to load the full form
+      if ((isset($form_state['paylinebymonext']['storage']['sellpoint']) && $form_state['paylinebymonext']['storage']['sellpoint'] >= 0)
+          || $form['parameter']['payment_method']['settings']['payment_method']['settings']['contracts']['sellpoint']['#default_value'] >= 0) {
+        // reformat some form's fields as all informations are available
+        $form['parameter']['payment_method']['settings']['payment_method']['settings']['contracts']['#description'] = t('Now, choose your primary and secundary payline contracts.');
+        $form['parameter']['payment_method']['settings']['payment_method']['settings']['contracts']['sellpoint']['#description'] = t('Wrong point of sell ? Change now !');
+        /**
+         * prepare the contracts settings fields
+            these fields array can have be generated by two different way :
+             If the sellpoint fields were never displayed : fields definition were stored in $virtual_contracts_fields.
+         * @see  commerce_paylinebymonext_ui_contracts_virtual_fields().
+             Else they were generated from stored settings in the commerce_paylinebymonext_ui_settings_form() function.
+         * @see commerce_paylinebymonext_ui_settings_form().
+         */
+
+        if (isset($form_state['paylinebymonext']['storage']['sellpoint'])) {
+          $sellPoint = $form_state['paylinebymonext']['storage']['sellpoint'];
+        } else {
+          $sellPoint = $form['parameter']['payment_method']['settings']['payment_method']['settings']['contracts']['sellpoint']['#default_value'];
+        }
+        if (empty($form['parameter']['payment_method']['settings']['payment_method']['settings']['contracts'][$sellPoint])
+            && empty($form_state['paylinebymonext']['storage']['internal_contracts'][$sellPoint])) {
+          $form['parameter']['payment_method']['settings']['payment_method']['settings']['contracts']['sellpoints'][$sellPoint] = $virtual_contracts_fields[$sellPoint];
+        }
+        // enable only contracts for selected sellpoint
+        // this is necessary if sellpoint contracts field were generated by commerce_paylinebymonext_ui_contracts_virtual_fields() function
+        foreach ($form['parameter']['payment_method']['settings']['payment_method']['settings']['contracts']['sellpoints'][$sellPoint] as $type => $fields) {
+          $form['parameter']['payment_method']['settings']['payment_method']['settings']['contracts']['sellpoints'][$sellPoint][$type]['#access'] = TRUE;
+          foreach ($form['parameter']['payment_method']['settings']['payment_method']['settings']['contracts']['sellpoints'][$sellPoint][$type] as $key => $elt) {
+            if (strpos($key, '#') === FALSE) {
+              $form['parameter']['payment_method']['settings']['payment_method']['settings']['contracts']['sellpoints'][$sellPoint][$type][$key]['#access'] = TRUE;
+            }
+          }
+        }
+        // enable the customisation fieldset and the submit button
+        $form['parameter']['payment_method']['settings']['payment_method']['settings']['customisation']['#disabled'] = FALSE;
+        $form['parameter']['payment_method']['settings']['payment_method']['settings']['customisation']['#collapsed'] = FALSE;
+        $form['parameter']['payment_method']['settings']['payment_method']['settings']['customisation']['#description'] = t('Set your custom payment pages');
+        $form['parameter']['payment_method']['settings']['payment_method']['settings']['submit'] = $form['submit'];
+        $form['parameter']['payment_method']['settings']['payment_method']['settings']['submit']['#access'] = TRUE;
+      }
+    }
+  }
+}
+
+/**
+ * validate function for settings action components on payline method rules
+ * @see _commerce_paylinebymonext_ui_settings_form_validate_process().
+ *
+ * @param array $form
+ * @param array $form_state
+ */
+function commerce_paylinebymonext_ui_settings_form_validate(&$form, &$form_state) {
+  module_load_include('inc', 'commerce_paylinebymonext_ui', 'includes/commerce_paylinebymonext_ui.form');
+  _commerce_paylinebymonext_ui_settings_form_validate_process($form, $form_state);
+}
+
+/**
+ * submit function for settings action components on payline method rules
+ * @see _commerce_paylinebymonext_ui_settings_form_submit_process().
+ *
+ * @param array $form
+ * @param array $form_state
+ */
+function commerce_paylinebymonext_ui_settings_form_submit(&$form, &$form_state) {
+  module_load_include('inc', 'commerce_paylinebymonext_ui', 'includes/commerce_paylinebymonext_ui.form');
+  _commerce_paylinebymonext_ui_settings_form_submit_process($form, $form_state);
+}
+
+/**
+ * Access callback for payline ui transactions link and page
+ *
+ * @param string $op
+ *  the operation to be performed
+ * @param stdClass $transaction
+ *  a commerce_payment_transaction object
+ * @return bool
+ */
+function commerce_paylinebymonext_ui_transaction_access($op, $transaction) {
+  if (strpos($transaction->payment_method, 'payline') !== FALSE
+    && user_access('payline do ' . $op)
+    && $transaction->status == COMMERCE_PAYMENT_STATUS_SUCCESS
+    && (!$transaction->data['refunded'] || $transaction->data['refund_amount'] < $transaction->amount)
+    && !variable_get('commerce_paylinebymonext_ui_refund_disabled', 0)
+  ) {
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
+ * implements hook_views_post_render().
+ *  Reformat remote_id link to link on payline back office
+ *  As a check_plain process is done on field output from view_pre_render
+ *  we have to do it in post_render process with direct replace in htm output...
+ *
+ * @param object $view
+ * @param string $output
+ * @param string $cache
+ */
+function commerce_paylinebymonext_ui_views_post_render(&$view, &$output, &$cache) {
+  if ($view->name == 'commerce_payment_order') {
+    $output = str_replace('refunded_', '', $output);
+    foreach ($view->result as $transaction) {
+      if (property_exists($transaction, 'transaction_id') && property_exists($transaction, 'commerce_payment_transaction_payment_method') && strpos($transaction->commerce_payment_transaction_payment_method, 'payline') !== FALSE) {
+        $transaction_object = commerce_payment_transaction_load($transaction->transaction_id);
+        $link = commerce_paylinebymonext_ui_remote_id_field_format($transaction_object);
+        $output = str_replace(str_replace('refunded_', '', $transaction_object->remote_id), $link, $output);
+      }
+    }
+  }
+}
+
+/**
+ * format a link to payline BO from a transaction object
+ *  following this payline instruction https://support.payline.com/hc/fr/articles/202029653-Un-permalien-pour-acc%C3%A9der-directement-%C3%A0-l-%C3%A9cran-de-d%C3%A9tail-d-une-transaction-
+ *
+ * @param stdClass $transaction
+ *  a commerce_payment_transaction object
+ * @return string
+ */
+function commerce_paylinebymonext_ui_remote_id_field_format($transaction) {
+  $interval = variable_get('commerce_paylinebymonext_transaction_search_interval', COMMERCE_PAYLINE_TRANSACTION_SEARCH_INTERVAL);
+  $start = format_date($transaction->created - $interval, 'custom', COMMERCE_PAYLINE_GET_DATEFORMAT);
+  $end = format_date($transaction->created + $interval, 'custom', COMMERCE_PAYLINE_GET_DATEFORMAT);
+  $payment_method = commerce_paylinebymonext_payment_method_load($transaction->payment_method);
+  $environnement = COMMERCE_PAYLINE_HOMOLOGATION_URL;
+  if ($payment_method['settings']['access']['production'] == 1) {
+    $environnement = COMMERCE_PAYLINE_PRODUCTION_URL;
+  }
+  $options = array(
+    'external' => TRUE,
+    'https' => TRUE,
+    'attributes' => array(
+      'target' => '_blank',
+    ),
+    'query' => array(
+      'reqCode' => COMMERCE_PAYLINE_TRANSACTION_SEARCH_REQCODE,
+      'mid' => $payment_method['settings']['access']['merchant_id'],
+      'ref' => $transaction->order_id,
+      'start' => $start,
+      'end' => $end,
+    ),
+  );
+  $remote_id_format = l($transaction->remote_id, $environnement, $options);
+  return $remote_id_format;
+}
+
+/**
+ * Return a sell points options array for form element
+ *
+ * @param array $remote_info
+ *  the POS payline response of getMerchantSettingsToArray() call method
+ * @return array
+ *  The sell points options array for form element
+ */
+function commerce_paylinebymonext_ui_sellpoints_list($remote_info) {
+  $sellPoints = array(-1 => t('--------------'));
+  foreach ($remote_info as $key => $sellPointsInfo) {
+    $sellPoints[$key] = $sellPointsInfo['label'];
+  }
+
+  return $sellPoints;
+}
+
+/**
+ * Format the contracts fieldsets for a sellPoint
+ *
+ * @param array $form
+ * @param array $remote_info
+ *  stores sellpoints and contracts information call from payline web service
+ * @param $sellPoint
+ */
+function commerce_paylinebymonext_ui_contracts_fieldset_format(&$form, $remote_info, $sellPoint) {
+  $contracts_assist = $remote_info[$sellPoint]['contracts'];
+  $contracts_base_info = commerce_paylinebymonext_contracts_types();
+  $contracts_processed = array();
+  foreach ($contracts_assist as $contract) {
+    $contract_type = strtolower($contract['cardType']);
+    $img = array(
+      '#theme' => 'image',
+      '#path' => $contracts_base_info[$contract_type]['path'],
+      '#title' => $contract['label'],
+      '#alt' => t('@contract logo', array('@contract' => $contract['label'])),
+    );
+    if (!array_key_exists($contract_type, $contracts_processed)) {
+      $type = $contract_type;
+      $contracts_processed[$contract_type] = 2;
+    } else {
+      $type = $contract_type . '#' . $contracts_processed[$contract_type];
+      $contracts_processed[$contract_type]++;
+    }
+    /**
+     * by default all fielsets are no accessible
+     * only the selected sellpoint fieldset will be displayed
+     * @see commerce_paylinebymonext_ui_form_rules_ui_edit_element_alter().
+     */
+    $form['parameter']['payment_method']['settings']['payment_method']['settings']['contracts']['sellpoints'][$sellPoint][$type] = array(
+      '#type' => 'fieldset',
+      '#access' => FALSE,
+      '#attributes' => array('class' => array('payline-contract-item')),
+      'contract_logo' => array(
+        $img,
+      ),
+      'information' => array(
+        '#theme' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => array(
+          'class' => array('payline-contract-information'),
+        ),
+        '#value' => t('@label contract', array('@label' => $contract['label'])),
+      ),
+      'contract_number' => array(
+        '#type' => 'textfield',
+        '#default_value' => $contract['contractNumber'],
+        '#disabled' => TRUE,
+      ),
+      'primary' => array(
+        '#type' => 'checkbox',
+        '#title' => t('Primary'),
+        '#default_value' => 0,
+      ),
+      'secondary' => array(
+        '#type' => 'checkbox',
+        '#title' => t('Secondary'),
+        '#default_value' => 0,
+      ),
+      'label' => array(
+        '#type' => 'value',
+        '#value' => $contract['label'],
+      ),
+    );
+  }
+}
+
+/**
+ * Format all sellpoints and contracts fieldsets from payline informations
+ *
+* @param array $remote_info
+ *  stores sellpoints and contracts information call from payline web service
+ * @return array
+ */
+function commerce_paylinebymonext_ui_contracts_virtual_fields($remote_info) {
+  $virtual_form = array();
+  foreach ($remote_info as $sellPoint => $infos) {
+    commerce_paylinebymonext_ui_contracts_fieldset_format($virtual_form, $remote_info, $sellPoint);
+  }
+  $virtual_contracts_fields = $virtual_form['parameter']['payment_method']['settings']['payment_method']['settings']['contracts']['sellpoints'];
+  return $virtual_contracts_fields;
+}

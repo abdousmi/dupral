@@ -1,0 +1,8 @@
+<?php
+
+/**
+ * Set variable show a re configure for payline payment method is required
+ */
+function commerce_paylinebymonext_ui_update_7100() {
+  variable_set('commerce_paylinebymonext_method_reset', 1);
+}

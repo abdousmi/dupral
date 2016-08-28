@@ -1,0 +1,21 @@
+<?php
+/**
+ * Implementation de la  hook_block_info()
+ */
+function hello_block_info() {
+    $block['hello-block'] = array(
+        'info' => t('Bonjour tout le monde!'),
+    );
+    return $block;
+}
+/**
+ * Implementation de la  hook_block_view()
+ */
+function hello_block_view($delta = '') {
+    $block = array(
+        'subject' => t('Mon module:'),
+        'content' => t('Bonjour tout le monde !!')
+    );
+    return $block;
+}
+

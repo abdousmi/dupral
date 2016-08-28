@@ -1,0 +1,209 @@
+<?php
+
+/**
+ * @file
+ *  Provide api function to payline specific currency features
+ */
+
+/**
+ * format currency alpha iso code to num iso code or inverse
+ *
+ * @param $code
+ * @param string $switch
+ *  accepted values :
+ *    'atn' => alpha code to num code
+ *    'nta' => num code to alpha code
+ * @return string|bool
+ */
+function commerce_paylinebymonext_currency_format($code, $switch = 'atn') {
+  $currencies = array(
+    'EUR' => '978', // Euro
+    'AFN' => '971', // Afghani
+    'ALL' => '8', // Lek
+    'DZD' => '12', // Algerian Dinar
+    'USD' => '840', // US Dollar
+    'AOA' => '973', // Kwanza
+    'XCD' => '951', // East Caribbean Dollar
+    'ARS' => '32', // Argentine Peso
+    'AMD' => '51', // Armenian Dram
+    'AWG' => '533', // Aruban Guilder
+    'AUD' => '36', // Australian Dollar
+    'AZN' => '944', // Azerbaijanian Manat
+    'BSD' => '44', // Bahamian Dollar
+    'BHD' => '48', // Bahraini Dinar
+    'BDT' => '50', // Taka
+    'BBD' => '52', // Barbados Dollar
+    'BYR' => '974', // Belarussian Ruble
+    'BZD' => '84', // Belize Dollar
+    'XOF' => '952', // CFA Franc BCEAO �
+    'BMD' => '60', // Bermudian Dollar (customarily known as Bermuda Dollar)
+    'INR' => '356', // Indian Rupee
+    'BTN' => '64', // Ngultrum
+    'BOB' => '68', // Boliviano
+    'BOV' => '984', // Mvdol
+    'BAM' => '977', // Convertible Marks
+    'BWP' => '72', // Pula
+    'NOK' => '578', // Norwegian Krone
+    'BRL' => '986', // Brazilian Real
+    'BND' => '96', // Brunei Dollar
+    'BGN' => '975', // Bulgarian Lev
+    'BIF' => '108', // Burundi Franc
+    'KHR' => '116', // Riel
+    'XAF' => '950', // CFA Franc BEAC �
+    'CAD' => '124', // Canadian Dollar
+    'CVE' => '132', // Cape Verde Escudo
+    'KYD' => '136', // Cayman Islands Dollar
+    'CLP' => '152', // Chilean Peso
+    'CLF' => '990', // Unidades de formento
+    'CNY' => '156', // Yuan Renminbi
+    'COP' => '170', // Colombian Peso
+    'COU' => '970', // Unidad de Valor Real
+    'KMF' => '174', // Comoro Franc
+    'CDF' => '976', // Franc Congolais
+    'NZD' => '554', // New Zealand Dollar
+    'CRC' => '188', // Costa Rican Colon
+    'HRK' => '191', // Croatian Kuna
+    'CUP' => '192', // Cuban Peso
+    'CYP' => '196', // Cyprus Pound
+    'CZK' => '203', // Czech Koruna
+    'DKK' => '208', // Danish Krone
+    'DJF' => '262', // Djibouti Franc
+    'DOP' => '214', // Dominican Peso
+    'EGP' => '818', // Egyptian Pound
+    'SVC' => '222', // El Salvador Colon
+    'ERN' => '232', // Nakfa
+    'EEK' => '233', // Kroon
+    'ETB' => '230', // Ethiopian Birr
+    'FKP' => '238', // Falkland Islands Pound
+    'FJD' => '242', // Fiji Dollar
+    'XPF' => '953', // CFP Franc
+    'GMD' => '270', // Dalasi
+    'GEL' => '981', // Lari
+    'GHC' => '288', // Cedi
+    'GIP' => '292', // Gibraltar Pound
+    'GTQ' => '320', // Quetzal
+    'GNF' => '324', // Guinea Franc
+    'GWP' => '624', // Guinea-Bissau Peso
+    'GYD' => '328', // Guyana Dollar
+    'HTG' => '332', // Gourde
+    'HNL' => '340', // Lempira
+    'HKD' => '344', // Hong Kong Dollar
+    'HUF' => '348', // Forint
+    'ISK' => '352', // Iceland Krona
+    'IDR' => '360', // Rupiah
+    'XDR' => '960', // SDR
+    'IRR' => '364', // Iranian Rial
+    'IQD' => '368', // Iraqi Dinar
+    'ILS' => '376', // New Israeli Sheqel
+    'JMD' => '388', // Jamaican Dollar
+    'JPY' => '392', // Yen
+    'JOD' => '400', // Jordanian Dinar
+    'KZT' => '398', // Tenge
+    'KES' => '404', // Kenyan Shilling
+    'KPW' => '408', // North Korean Won
+    'KRW' => '410', // Won
+    'KWD' => '414', // Kuwaiti Dinar
+    'KGS' => '417', // Som
+    'LAK' => '418', // Kip
+    'LVL' => '428', // Latvian Lats
+    'LBP' => '422', // Lebanese Pound
+    'ZAR' => '710', // Rand
+    'LSL' => '426', // Loti
+    'LRD' => '430', // Liberian Dollar
+    'LYD' => '434', // Libyan Dinar
+    'CHF' => '756', // Swiss Franc
+    'LTL' => '440', // Lithuanian Litas
+    'MOP' => '446', // Pataca
+    'MKD' => '807', // Denar
+    'MGA' => '969', // Malagascy Ariary
+    'MWK' => '454', // Kwacha
+    'MYR' => '458', // Malaysian Ringgit
+    'MVR' => '462', // Rufiyaa
+    'MTL' => '470', // Maltese Lira
+    'MRO' => '478', // Ouguiya
+    'MUR' => '480', // Mauritius Rupee
+    'MXN' => '484', // Mexican Peso
+    'MXV' => '979', // Mexican Unidad de Inversion (UID)
+    'MDL' => '498', // Moldovan Leu
+    'MNT' => '496', // Tugrik
+    'MAD' => '504', // Moroccan Dirham
+    'MZN' => '943', // Metical
+    'MMK' => '104', // Kyat
+    'NAD' => '516', // Namibian Dollar
+    'NPR' => '524', // Nepalese Rupee
+    'ANG' => '532', // Netherlands Antillian Guilder
+    'NIO' => '558', // Cordoba Oro
+    'NGN' => '566', // Naira
+    'OMR' => '512', // Rial Omani
+    'PKR' => '586', // Pakistan Rupee
+    'PAB' => '590', // Balboa
+    'PGK' => '598', // Kina
+    'PYG' => '600', // Guarani
+    'PEN' => '604', // Nuevo Sol
+    'PHP' => '608', // Philippine Peso
+    'PLN' => '985', // Zloty
+    'QAR' => '634', // Qatari Rial
+    'ROL' => '642', // Old Leu
+    'RON' => '946', // New Leu
+    'RUB' => '643', // Russian Ruble
+    'RWF' => '646', // Rwanda Franc
+    'SHP' => '654', // Saint Helena Pound
+    'WST' => '882', // Tala
+    'STD' => '678', // Dobra
+    'SAR' => '682', // Saudi Riyal
+    'RSD' => '941', // Serbian Dinar
+    'SCR' => '690', // Seychelles Rupee
+    'SLL' => '694', // Leone
+    'SGD' => '702', // Singapore Dollar
+    'SKK' => '703', // Slovak Koruna
+    'SIT' => '705', // Tolar
+    'SBD' => '90', // Solomon Islands Dollar
+    'SOS' => '706', // Somali Shilling
+    'LKR' => '144', // Sri Lanka Rupee
+    'SDG' => '938', // Sudanese Dinar
+    'SRD' => '968', // Surinam Dollar
+    'SZL' => '748', // Lilangeni
+    'SEK' => '752', // Swedish Krona
+    'CHW' => '948', // WIR Franc
+    'CHE' => '947', // WIR Euro
+    'SYP' => '760', // Syrian Pound
+    'TWD' => '901', // New Taiwan Dollar
+    'TJS' => '972', // Somoni
+    'TZS' => '834', // Tanzanian Shilling
+    'THB' => '764', // Baht
+    'TOP' => '776', // Pa'anga
+    'TTD' => '780', // Trinidad and Tobago Dollar
+    'TND' => '788', // Tunisian Dinar
+    'TRY' => '949', // New Turkish Lira
+    'TMM' => '795', // Manat
+    'UGX' => '800', // Uganda Shilling
+    'UAH' => '980', // Hryvnia
+    'AED' => '784', // UAE Dirham
+    'GBP' => '826', // Pound Sterling
+    'USS' => '998', // (Same day)
+    'USN' => '997', // (Next day)
+    'UYU' => '858', // Peso Uruguayo
+    'UYI' => '940', // Uruguay Peso en Unidades Indexadas
+    'UZS' => '860', // Uzbekistan Sum
+    'VUV' => '548', // Vatu
+    'VEB' => '862', // Bolivar
+    'VND' => '704', // Dong
+    'YER' => '886', // Yemeni Rial
+    'ZMK' => '894', // Kwacha
+    'ZWD' => '716', // Zimbabwe Dollar
+    'XAU' => '959', // Gold
+    'XBA' => '955', // Bond Markets Units European Composite Unit (EURCO)
+    'XBB' => '956', // European Monetary Unit (E.M.U.-6)
+    'XBC' => '957', // European Unit of Account 9(E.U.A.-9)
+    'XBD' => '958', // European Unit of Account 17(E.U.A.-17)
+    'XPD' => '964', // Palladium
+    'XPT' => '962', // Platinum
+    'XAG' => '961', // Silver
+    'XTS' => '963', // Codes specifically reserved for testing purposes
+    'XXX' => '999', // The codes assigned for transactions where no currency is involved
+  );
+  if ($switch == ('nta')) {
+    $currencies = array_flip($currencies);
+  }
+  return isset($currencies[$code]) ? $currencies[$code] : FALSE;
+}

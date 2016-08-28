@@ -1,0 +1,300 @@
+<?php
+
+/**
+ * @file
+ * Provide standard functions and api for Monext Payline Payment Methods.
+ */
+
+define('COMMERCE_PAYLINE_WD', 'commerce_paylinebymonext');
+define('COMMERCE_PAYLINE_CONNEXIONERROR', 'XXXXX');
+define('COMMERCE_PAYLINE_UNVALID_CONTRACT', '02303');
+define('COMMERCE_PAYLINE_UNFORMATEDFIELD', '02305');
+define('COMMERCE_PAYLINE_NOERROR', '00000');
+define('COMMERCE_PAYLINE_NOCONNEXION', 'Could not connect to host');
+define('COMMERCE_PAYLINE_UNAUTHORIZED', 'unauthorized');
+define('COMMERCE_PAYLINE_AUTHORIZATION_REQUIRED', 'Authorization Required');
+define('COMMERCE_PAYLINE_UNVALID_CUSTOMPAYEMENTPAGECODE', 'Invalid field format : customPaymentPageCode');
+define('COMMERCE_PAYLINE_TRANSACTION_STATUS_REFUND', 'payline_refund');
+define('COMMERCE_PAYLINE_TRANSACTION_STATUS_REFUND_FAILURE', 'payline_refund_failure');
+define('COMMERCE_PAYLINE_TRANSACTION_STATUS_AUTHORIZED', 'payline_authorized');
+define('COMMERCE_PAYLINE_TRANSACTION_STATUS_FRAUD_SUCCESS', 'fraud_suspected_transaction_success');
+define('COMMERCE_PAYLINE_TRANSACTION_STATUS_FRAUD_FAILURE', 'fraud_suspected_transaction_failed');
+define('COMMERCE_PAYLINE_ORDER_STATUS_FRAUD_SUSPECTED', 'fraud_suspected');
+define('COMMERCE_PAYLINE_CODE_STATUS_FRAUD_SUCCESS', '04003');
+define('COMMERCE_PAYLINE_CODE_STATUS_FRAUD_FAILURE', '04002');
+define('COMMERCE_PAYLINE_CODE_STATUS_GENERAL_FAILURE', 'XXXXX');
+
+
+/**
+ * Implements hook_menu().
+ *
+ * @return array
+ */
+function commerce_paylinebymonext_menu() {
+  $items = array();
+  // internal path to payline interface notification
+  $items['commerce_paylinebymonext/payment_notification/%/%commerce_order'] = array(
+    'page callback' => 'commerce_paylinebymonext_ppn',
+    'page arguments' => array(2, 3),
+    'access arguments' => array('access content'),
+    'file' => 'includes/commerce_paylinebymonext.payments.inc',
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function commerce_paylinebymonext_permission() {
+  return array(
+    'payline do refund' => array(
+      'title' => t('Do payline refund'),
+      'description' => t('Perform refund for transaction did with payline payment solution.')
+    ),
+  );
+}
+
+/**
+ * Implements hook_commerce_payment_transaction_status_info().
+ *  Add refund status
+ *
+ */
+function commerce_paylinebymonext_commerce_payment_transaction_status_info() {
+  $statuses = array();
+  $statuses[COMMERCE_PAYLINE_TRANSACTION_STATUS_REFUND] = array(
+    'status' => COMMERCE_PAYLINE_TRANSACTION_STATUS_REFUND,
+    'title' => t('refund success'),
+    'icon' => drupal_get_path('module', 'commerce_payment') . '/theme/icon-success.png',
+    'total' => TRUE,
+  );
+  $statuses[COMMERCE_PAYLINE_TRANSACTION_STATUS_REFUND_FAILURE] = array(
+    'status' => COMMERCE_PAYLINE_TRANSACTION_STATUS_REFUND_FAILURE,
+    'title' => t('refund failure'),
+    'icon' => drupal_get_path('module', 'commerce_payment') . '/theme/icon-failure.png',
+    'total' => FALSE,
+  );
+  $statuses[COMMERCE_PAYLINE_TRANSACTION_STATUS_FRAUD_SUCCESS] = array(
+    'status' => COMMERCE_PAYLINE_TRANSACTION_STATUS_FRAUD_SUCCESS,
+    'title' => t('Fraud suspected / transaction ok'),
+    'icon' => drupal_get_path('module', 'commerce_payment') . '/theme/icon-success.png',
+    'total' => TRUE,
+  );
+
+  $statuses[COMMERCE_PAYLINE_TRANSACTION_STATUS_FRAUD_FAILURE] = array(
+    'status' => COMMERCE_PAYLINE_TRANSACTION_STATUS_FRAUD_FAILURE,
+    'title' => t('Fraud suspected / transaction ko'),
+    'icon' => drupal_get_path('module', 'commerce_payment') . '/theme/icon-failure.png',
+    'total' => TRUE,
+  );
+  return $statuses;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *  Alter the payment checkout form to add the payline icone and the custom merchant description
+ */
+function commerce_paylinebymonext_form_commerce_checkout_form_alter(&$form, &$form_state) {
+  // If this checkout form contains the payment method radios...
+  if (!empty($form['commerce_payment']['payment_method']['#options'])) {
+    // Loop over its options array looking for a payline methods
+    foreach ($form['commerce_payment']['payment_method']['#options'] as $key => &$value) {
+      // If we find payline ...
+      if (strpos($key, 'payline') !== FALSE) {
+        // Prepare the replacement radio button text with icons.
+        $icon = array(
+          '#theme' => 'image',
+          '#path' => drupal_get_path('module', 'commerce_paylinebymonext') . '/images/payline-by-monext-fr-rvb.png',
+          '#alt' => t('Payline'),
+        );
+        $value = render($icon);
+        if (!empty($form['commerce_payment']['payment_methods']['#value'][$key]['settings']['customisation']['custom_description'])) {
+          $markup = array(
+            '#theme' => 'html_tag',
+            '#tag' => 'div',
+            '#value' => filter_xss(
+              nl2br($form['commerce_payment']['payment_methods']['#value'][$key]['settings']['customisation']['custom_description']),
+              array('br')
+            ),
+            '#attributes' => array(
+              'class' => array('commerce-payline-description'),
+            ),
+          );
+          $value .= render($markup);
+        }
+        break;
+      }
+    }
+  }
+}
+
+/**
+ * set the payline interfaces urls
+ *
+ * @param string $method_id
+ * @param int $order_id
+ * @return array
+ */
+function commerce_paylinebymonext_get_interface_url($method_id, $order_id) {
+  // we expose method_id and order id to can use it on payline notification process
+  $url = url('commerce_paylinebymonext/payment_notification/' . $method_id . '/' . $order_id, array(
+    'https' => TRUE,
+    'absolute' => TRUE
+  ));
+  $urls = array(
+    'cancelURL' => $url,
+    'notificationURL' => $url,
+    'returnURL' => $url,
+  );
+  // give opportunity to custom module to use custom payline interface urls
+  drupal_alter('commerce_paylinebymonext_interface_url', $urls);
+  return $urls;
+}
+
+/**
+ * Instance new paylineSDK class
+ *
+ * @param $settings
+ * @return commercePaylineSDK
+ */
+function commerce_paylinebymonext_sdk($settings) {
+  $access = $settings['access'];
+  $proxy = $settings['proxy'];
+  $payline_sdk = new commercePaylineSDK(
+    $access['merchant_id'],
+    $access['access_key'],
+    $proxy['proxy_host'],
+    $proxy['proxy_port'],
+    $proxy['proxy_user'],
+    $proxy['proxy_pwd'],
+    $access['production']
+  );
+  return $payline_sdk;
+}
+
+/**
+ * Implements hook_commerce_paylinebymonext_settings_alter().
+ *  add primary and secondary contracts informations
+ *
+ * @param array $settings
+ */
+function commerce_paylinebymonext_commerce_paylinebymonext_settings_alter(&$settings) {
+  if (!isset($settings['primary_contracts']) || empty($settings['primary_contracts'])) {
+    $contracts = commerce_paylinebymonext_contracts_get($settings['method_id']);
+    $settings['primary_contracts'] = $contracts['primary_contracts'];
+    $settings['secondary_contracts'] = $contracts['secondary_contracts'];
+  }
+}
+
+/**
+ * Get primary and secondaty contracts for a payment method.
+ *
+ * @param $method_id
+ * @return array
+ */
+function commerce_paylinebymonext_contracts_get($method_id) {
+  $result = db_select('commerce_paylinebymonext_custom_settings', 'cps')
+    ->fields('cps', array('primary_contracts', 'secondary_contracts'))
+    ->condition('cps.method_id', $method_id)
+    ->execute()->fetchAssoc();
+  return array(
+    'primary_contracts' => unserialize($result['primary_contracts']),
+    'secondary_contracts' => unserialize($result['secondary_contracts']),
+  );
+}
+
+/**
+ * Set additionnal data in a order object
+ *
+ * @param $order
+ * @param $data
+ */
+function commerce_paylinebymonext_order_data_set(&$order, $data) {
+  foreach ($data as $name => $value) {
+    $order->data[$name] = $value;
+  }
+  commerce_order_save($order);
+}
+
+/**
+ * Duplicate commerce_payment_redirect_pane_previous_page() with drupal_goto
+ *
+ * @see commerce_payment_redirect_pane_previous_page()
+ * @param $order
+ * @param string $log
+ */
+function commerce_paylinebymonext_redirect_pane_previous_page(&$order, $log = '') {
+  // Load the order status object for the current order.
+  $order_status = commerce_order_status_load($order->status);
+
+  if ($order_status['state'] == 'checkout' && $order_status['checkout_page'] == 'payment') {
+    $payment_page = commerce_checkout_page_load($order_status['checkout_page']);
+    $prev_page = $payment_page['prev_page'];
+
+    $order = commerce_order_status_update($order, 'checkout_' . $prev_page, FALSE, NULL, $log);
+  }
+  drupal_goto('checkout/' . $order->order_id . '/' . $prev_page);
+}
+
+/**
+ * Duplicate commerce_payment_redirect_pane_next_page() with drupal_goto
+ * @see commerce_payment_redirect_pane_next_page()
+ *
+ * @param $order
+ * @param string $log
+ */
+function commerce_paylinebymonext_redirect_pane_next_page($order, $log = '') {
+  // Load the order status object for the current order.
+  $order_status = commerce_order_status_load($order->status);
+  if ($order_status['state'] == 'checkout' && $order_status['checkout_page'] == 'payment') {
+    $payment_page = commerce_checkout_page_load($order_status['checkout_page']);
+    $next_page = $payment_page['next_page'];
+
+    $order = commerce_order_status_update($order, 'checkout_' . $next_page, FALSE, NULL, $log);
+
+    // Inform modules of checkout completion if the next page is Completed.
+    if ($next_page == 'complete') {
+      commerce_checkout_complete($order);
+      //invoke commerce paylinemonexte after checkout completion
+      module_invoke_all('commerce_paylinemonext_aoc',$order);
+    }
+  }
+  drupal_goto('checkout/' . $order->order_id);
+}
+
+/**
+ * set standard messages for customer on error during payment process
+ *
+ * @param $order
+ */
+function commerce_paylinebymonext_set_warning($order) {
+  drupal_set_message(t('An error occured. Please contact the merchand with the following information'), 'warning', FALSE);
+  drupal_set_message(t('Order reference : @order_id', array('@order_id' => $order->order_id)), 'warning', FALSE);
+}
+
+/**
+ * Load a payline payment method
+ *
+ * @param $method_id
+ * @return array
+ */
+function commerce_paylinebymonext_payment_method_load($method_id) {
+  $payment_method = commerce_payment_method_instance_load($method_id . '|commerce_payment_' . $method_id);
+  $payment_method['settings']['method_id'] = $payment_method['method_id'];
+  drupal_alter('commerce_paylinebymonext_settings', $payment_method['settings']);
+  return $payment_method;
+}
+
+/**
+ * Implements hook_commerce_order_status_info_alter to add order status
+ *
+ * @param $order_statuses
+ */
+function commerce_paylinebymonext_commerce_order_status_info_alter(&$order_statuses) {
+  $order_statuses['COMMERCE_PAYLINE_ORDER_STATUS_FRAUD_SUSPECTED'] = array(
+    'name' => 'COMMERCE_PAYLINE_ORDER_STATUS_FRAUD_SUSPECTED',
+    'title' => t('Fraud suspected'),
+    'state' => 'pending',
+    'weight' => '6',
+    'cart' => false
+  );
+}

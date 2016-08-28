@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * @file
+ * install file for commerce_paylinebymonext
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function commerce_paylinebymonext_schema() {
+  // add custom table to store payment method settings requiring reformating to be used
+  $schema['commerce_paylinebymonext_custom_settings'] = array(
+    'description' => 'Stores complex settings for commerce payline',
+    'fields' => array(
+      'method_id' => array(
+        'description' => 'The primary identifier for a payment method.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'primary_contracts' => array(
+        'type' => 'blob',
+        'not null' => FALSE,
+        'size' => 'big',
+        'serialize' => TRUE,
+        'description' => 'primary contracts informations',
+      ),
+      'secondary_contracts' => array(
+        'type' => 'blob',
+        'not null' => FALSE,
+        'size' => 'big',
+        'serialize' => TRUE,
+        'description' => 'secondary contracts informations',
+      ),
+    ),
+    'primary key' => array('method_id'),
+  );
+  return $schema;
+}

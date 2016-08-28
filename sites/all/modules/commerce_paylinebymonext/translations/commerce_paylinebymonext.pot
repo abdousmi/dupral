@@ -1,0 +1,375 @@
+# $Id$
+#
+# LANGUAGE translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  commerce_paylinebymonext.module: n/a
+#  modules/commerce_paylinebymonext_wp/commerce_paylinebymonext_wp.module: n/a
+#  commerce_paylinebymonext.info: n/a
+#  modules/commerce_paylinebymonext_ui/commerce_paylinebymonext_ui.info: n/a
+#  modules/commerce_paylinebymonext_wp/commerce_paylinebymonext_wp.info: n/a
+#  includes/commerce_paylinebymonext.contracts.inc: n/a
+#  modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc: n/a
+#  includes/commerce_paylinebymonext.payments.inc: n/a
+#  includes/commerce_paylinebymonext.refund.inc: n/a
+#  includes/commerce_paylinebymonext.transaction.inc: n/a
+#  modules/commerce_paylinebymonext_ui/commerce_paylinebymonext_ui.module: n/a
+#  modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.admin.inc: n/a
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2014-06-30 11:02+0200\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#: commerce_paylinebymonext.module:43
+msgid "Do payline refund"
+msgstr ""
+
+#: commerce_paylinebymonext.module:44
+msgid "Perform refund for transaction did with payline payment solution."
+msgstr ""
+
+#: commerce_paylinebymonext.module:58
+msgid "refund success"
+msgstr ""
+
+#: commerce_paylinebymonext.module:64
+msgid "refund failure"
+msgstr ""
+
+#: commerce_paylinebymonext.module:86 modules/commerce_paylinebymonext_wp/commerce_paylinebymonext_wp.module:37
+msgid "Payline"
+msgstr ""
+
+#: commerce_paylinebymonext.module:247
+msgid "An error occured. Please contact the merchand with the following information"
+msgstr ""
+
+#: commerce_paylinebymonext.module:248
+msgid "Order reference : @order_id"
+msgstr ""
+
+#: commerce_paylinebymonext.info:0
+msgid "Payline by Monext"
+msgstr ""
+
+#: commerce_paylinebymonext.info:0
+msgid "Implements Monext Payline payment services for use with Drupal Commerce."
+msgstr ""
+
+#: commerce_paylinebymonext.info:0 modules/commerce_paylinebymonext_ui/commerce_paylinebymonext_ui.info:0 modules/commerce_paylinebymonext_wp/commerce_paylinebymonext_wp.info:0
+msgid "Commerce (Monext Payline)"
+msgstr ""
+
+#: includes/commerce_paylinebymonext.contracts.inc:150
+msgid "Banking Order"
+msgstr ""
+
+#: includes/commerce_paylinebymonext.contracts.inc:158
+msgid "cash option"
+msgstr ""
+
+#: includes/commerce_paylinebymonext.contracts.inc:204 modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:99
+msgid "@contract logo"
+msgstr ""
+
+#: includes/commerce_paylinebymonext.payments.inc:235
+msgid "Store order and payline order ref doesn't match"
+msgstr ""
+
+#: includes/commerce_paylinebymonext.payments.inc:237
+msgid "Payline transaction and Order does not match : attempt to use @token, corresponding to @transaction, to validate @order_id store order"
+msgstr ""
+
+#: includes/commerce_paylinebymonext.payments.inc:302
+msgid "Please, choose a payment method"
+msgstr ""
+
+#: includes/commerce_paylinebymonext.refund.inc:100
+msgid "Refund return process uncountered unexpected error"
+msgstr ""
+
+#: includes/commerce_paylinebymonext.transaction.inc:106
+msgid "Transaction cancelled by yourself"
+msgstr ""
+
+#: includes/commerce_paylinebymonext.transaction.inc:114
+msgid "We are sorry, your transaction has been refused."
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/commerce_paylinebymonext_ui.module:22
+msgid "Refund (Payline)"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/commerce_paylinebymonext_ui.info:0
+msgid "Payline by Monext UI"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/commerce_paylinebymonext_ui.info:0
+msgid "Implements Monext Payline UI function"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.admin.inc:19
+msgid "Refund transaction @transaction_id for order @order_id"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.admin.inc:61
+msgid "Items manager"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.admin.inc:66
+msgid "Refund Type"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.admin.inc:73
+msgid "Refund without remove items"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.admin.inc:74
+msgid "Do you want perform a refund without remove any items ?"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.admin.inc:89
+msgid "Amount to refund"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.admin.inc:114
+msgid "Remove items you want to refund (check remove checkbox or decrease quantity)."
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.admin.inc:126
+msgid "Order status"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.admin.inc:132
+msgid "Status after refund"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.admin.inc:135
+msgid "Which status order will be get afer you perform refund"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.admin.inc:144
+msgid "Update log message"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.admin.inc:145
+msgid "Provide an explanation of the changes you are making. This will provide a meaningful audit trail for updates to this order."
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.admin.inc:149
+msgid "Confirm transaction refund (payline transaction : @remote_id) for order @order_id"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.admin.inc:151
+msgid "Are you sure to want to refund a part of this order ?"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.admin.inc:152
+msgid "Refund"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.admin.inc:169
+msgid "Fill the amount you want to refund for this order - any line item will be removed."
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.admin.inc:196
+msgid "Amount to refund is greater than orginal amount"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.admin.inc:209
+msgid "Qantity of product is greater than original quantity"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.admin.inc:218
+msgid "You have perform no refund operation"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:24
+msgid "Payline Global Access"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:27
+msgid "Set your payline global access (merchant id, access key and target environnement"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:31
+msgid "Merchand ID"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:32
+msgid "Your payline merchant id"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:38
+msgid "Access Key"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:39
+msgid "Your payline access key"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:45
+msgid "Target environnement"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:47
+msgid "Homologation"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:48
+msgid "Production"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:50
+msgid "Your payline environnement"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:57
+msgid "Proxy"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:60
+msgid "Set your proxy environnement"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:63
+msgid "Proxy Host"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:64
+msgid "Your proxy host"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:69
+msgid "Proxy Port"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:70
+msgid "Your proxy port"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:75
+msgid "Proxy User"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:76
+msgid "Your proxy user"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:81
+msgid "Proxy Password"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:82
+msgid "Your proxy password"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:89
+msgid "Contracts"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:92
+msgid "Set your payline contracts"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:113
+msgid "Primary"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:118
+msgid "Secondary"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:126
+msgid "Customisations"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:129
+msgid "Set your custom payment pages"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:132
+msgid "Description"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:133
+msgid "You can set a description for this payment method. It will be displayed on checkout form"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:138
+msgid "Template URL"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:139
+msgid "Payment page's template url"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:144
+msgid "Customisation Id"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:165
+msgid "You have to choose at least one primary contracts"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:203
+msgid "custom template url : @templateUrl"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:207
+msgid "Customisation ID : @customisationID"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:210 modules/commerce_paylinebymonext_wp/commerce_paylinebymonext_wp.module:22
+msgid "Your drupal commerce site is plugged on payline test environnement"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:263;274
+msgid "At least one of your contracts contract number is incorrect"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:270
+msgid "Your custom payment page code is not valid"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:278
+msgid "Template URL : Must be an https:// url on port 443"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:197
+msgid "@count primary contract is setted"
+msgid_plural "@count primary contracts are setted"
+msgstr[0] ""
+msgstr[1] ""
+
+#: modules/commerce_paylinebymonext_ui/includes/commerce_paylinebymonext_ui.form.inc:199
+msgid "@count secondary contract is setted"
+msgid_plural "@count secondary contracts are setted"
+msgstr[0] ""
+msgstr[1] ""
+
+#: modules/commerce_paylinebymonext_wp/commerce_paylinebymonext_wp.module:40
+msgid "Payline Immediat Web Payment"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_wp/commerce_paylinebymonext_wp.module:43
+msgid "Monext Payline Immediat Web Payment"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_wp/commerce_paylinebymonext_wp.info:0
+msgid "Payline by Monext WebPayment"
+msgstr ""
+
+#: modules/commerce_paylinebymonext_wp/commerce_paylinebymonext_wp.info:0
+msgid "Implements Monext Payline off site service in Drupal Commerce checkout."
+msgstr ""
+

@@ -1,0 +1,100 @@
+<?php
+function hook_form($node, &$form_state) {
+  $type = node_type_get_type($node);
+
+  $form['title'] = array(
+    '#type' => 'textfield', 
+    '#title' => check_plain($type->title_label), 
+    '#default_value' => !empty($node->title) ? $node->title : '', 
+    '#required' => TRUE, 
+    '#weight' => -5,
+  );
+
+  $form['field1'] = array(
+    '#type' => 'textfield', 
+    '#title' => t('Custom field'), 
+    '#default_value' => $node->field1, 
+    '#maxlength' => 127,
+  );
+  $form['selectbox'] = array(
+    '#type' => 'select', 
+    '#title' => t('Select box'), 
+    '#default_value' => $node->selectbox, 
+    '#options' => array(
+      1 => 'Option A', 
+      2 => 'Option B', 
+      3 => 'Option C',
+    ), 
+    '#description' => t('Choose an option.'),
+  );
+
+  return $form;
+}
+/*
+ * Implementation of hook_help()
+ */
+function summary_help($path, $arg) {
+    switch ($path) {
+        case 'admin/help#summary':
+            return '<p>' . t('Sample module from Atelier Drupal book. This module
+provide a summary page of your Drupal Installation.') . '</p>';
+    }
+}
+
+/*
+ * Implementation of hook_menu()
+ */
+function summary_menu(){
+    $items['summary'] = array(
+        'title' => t('Summary of your site'),
+        'page callback' => 'summary_content',
+        'access arguments' => array(true),
+        'type' => MENU_CALLBACK,
+    );
+
+ $items['admin/config/system/summary'] = array(
+     'title' => t('Summary settings'),
+     'description' => t('Summary configuration page'),
+     'page callback' => 'drupal_get_form',
+     'page arguments' => array('summary_admin_settings'),
+     'access arguments' => array('administer site configuration'),
+     'type' => MENU_NORMAL_ITEM,
+ );
+ return $items;
+}
+
+/*
+ * Content of the summary page
+ */
+function summary_content(){
+    //List of all activated modules
+    $summary_module_list = module_list();
+    $summary_module_list = t('<h3>List of all activated modules</h3>') .
+        implode($summary_module_list,', ');
+    $output = $summary_module_list;
+// List of vocabularies
+    $summary_vocabularies = taxonomy_get_vocabularies();
+    $summary_vocabularies_list='';
+    foreach ($summary_vocabularies as $vocab){
+        $summary_vocabularies_list .= $vocab->name . ',';
+    }
+    $summary_vocabularies_list = t('<h3>Vocabularies</h3>') . $summary_vocabularies_list;
+$output .= $summary_vocabularies_list;
+return $output;
+}
+/*
+ * Define the adminsitration form
+ */
+function summary_admin_settings(){
+    $form['summary_display'] = array(
+        '#type' => 'checkboxes',
+        '#title' => t('Things to show for the summary'),
+        '#description' => t('Check the things to show in the summary page'),
+        '#options' => array('module' => t('Module list'), 'vocabulary' =>
+            t('Vocabulary list'), 'content_type' => t('Content types')),
+        '#default_value' => variable_get('summary_display',array('module',
+            'vocabulary')),
+    );
+    return system_settings_form($form);
+}
+

@@ -1,0 +1,49 @@
+<?php
+
+/**
+ * @file
+ *  Implements Monext Payline Web Payment Method.
+ */
+
+/**
+ * Implements hook_init().
+ *  add warning message if user can configure store and if target environnement is setted on 'testing'.
+ */
+function commerce_paylinebymonext_wp_init() {
+  if (user_access('configure store') && arg(1) != 'ajax' && arg(0) != 'misc') {
+    $result = db_select('rules_config', 'r')
+      ->condition('r.name', 'commerce_payment_payline_wp')
+      ->condition('r.active', 1)
+      ->countQuery()
+      ->execute()->fetchField();
+    if ($result > 0) {
+      $payment_method = commerce_payment_method_instance_load('payline_wp|commerce_payment_payline_wp');
+      if (!empty($payment_method['settings']) && $payment_method['settings']['access']['production'] == 0) {
+        drupal_set_message(t('Your drupal commerce site is plugged on payline test environnement'), 'warning', FALSE);
+      }
+    }
+  }
+  else {
+    // ensure the warning is not displayed in ajax process
+    drupal_get_messages('warning');
+  }
+}
+
+/**
+ * Implements hook_commerce_payment_method_info().
+ */
+function commerce_paylinebymonext_wp_commerce_payment_method_info() {
+  $payment_methods = array();
+  $display_title = t('Payline');
+  $payment_methods['payline_wp'] = array(
+    'base' => 'commerce_paylinebymonext_wp',
+    'title' => t('Payline Immediat Web Payment'),
+    'display_title' => $display_title,
+    'short_title' => $display_title,
+    'description' => t('Monext Payline Immediat Web Payment'),
+    'terminal' => FALSE,
+    'offsite' => TRUE,
+    'file' => 'includes/commerce_paylinebymonext_wp.payments.inc',
+  );
+  return $payment_methods;
+}

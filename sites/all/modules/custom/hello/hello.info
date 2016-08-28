@@ -1,0 +1,12 @@
+; $Id:
+name = Hello
+
+description = Hello_Abdou pour l'Atelier Drupal.
+
+core = 7.x
+
+version = 7.x-0.x-dev
+
+package = Atelier Drupal
+
+files[] = hello.module

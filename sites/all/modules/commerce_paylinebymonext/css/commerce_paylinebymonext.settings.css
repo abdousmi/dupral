@@ -1,0 +1,11 @@
+#edit-parameter-payment-method .payline-contract-item {
+  float: left;
+  margin-right: 1em;
+  padding-top: 1em;
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
+}
+
+#edit-parameter-payment-method .payline-contract-item .form-text {
+  width: 12em;
+}

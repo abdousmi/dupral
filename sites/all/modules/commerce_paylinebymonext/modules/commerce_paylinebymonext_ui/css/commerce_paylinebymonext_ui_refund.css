@@ -1,0 +1,13 @@
+#edit-refund-operation .form-type-textfield {
+  float: left;
+}
+
+#edit-refund-operation .form-type-select {
+  padding-top: 1.6em;
+}
+
+#edit-refund-operation .description {
+  clear: both;
+  font-size: 13px;
+  font-weight: 100;
+}

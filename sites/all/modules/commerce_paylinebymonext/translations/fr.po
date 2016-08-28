@@ -1,0 +1,371 @@
+# $Id$
+#
+# LANGUAGE translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  commerce_payline.module: n/a
+#  modules/commerce_payline_wp/commerce_payline_wp.module: n/a
+#  commerce_payline.info: n/a
+#  modules/commerce_payline_ui/commerce_payline_ui.info: n/a
+#  modules/commerce_payline_wp/commerce_payline_wp.info: n/a
+#  includes/commerce_payline.contracts.inc: n/a
+#  modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc: n/a
+#  includes/commerce_payline.payments.inc: n/a
+#  includes/commerce_payline.refund.inc: n/a
+#  includes/commerce_payline.transaction.inc: n/a
+#  modules/commerce_payline_ui/commerce_payline_ui.module: n/a
+#  modules/commerce_payline_ui/includes/commerce_payline_ui.admin.inc: n/a
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2014-06-11 15:21+0200\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#: commerce_payline.module:43
+msgid "Do payline refund"
+msgstr "Rembourser avec Payline"
+
+#: commerce_payline.module:44
+msgid "Perform refund for transaction done with payline payment solution."
+msgstr "Rembourser la transaction Payline"
+
+#: commerce_payline.module:58
+msgid "refund success"
+msgstr "Remboursement réussi"
+
+#: commerce_payline.module:64
+msgid "refund failure"
+msgstr "Echec du remboursement"
+
+#: commerce_payline.module:86 modules/commerce_payline_wp/commerce_payline_wp.module:37
+msgid "Payline"
+msgstr "Payline"
+
+#: commerce_payline.module:247
+msgid "An error occured. Please contact the merchand with the following information"
+msgstr "Une erreur est survenue. Veuillez nous contacter en transmettant les informations suivantes"
+
+#: commerce_payline.module:248
+msgid "Order reference : @order_id"
+msgstr "Référence commande : @order_id"
+
+#: commerce_payline.info:0
+msgid "Monext Payline"
+msgstr "Monext Payline"
+
+#: commerce_payline.info:0
+msgid "Implements Monext Payline payment services for use with Drupal Commerce."
+msgstr "Implémentation de la solution de paiement Payline dans Drupal Commerce."
+
+#: commerce_payline.info:0 modules/commerce_payline_ui/commerce_payline_ui.info:0 modules/commerce_payline_wp/commerce_payline_wp.info:0
+msgid "Commerce (Monext Payline)"
+msgstr "Commerce (Monext Payline)"
+
+#: includes/commerce_payline.contracts.inc:150
+msgid "Banking Order"
+msgstr "Virement SEPA"
+
+#: includes/commerce_payline.contracts.inc:158
+msgid "cash option"
+msgstr "Wexpay"
+
+#: includes/commerce_payline.contracts.inc:204 modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:99
+msgid "@contract logo"
+msgstr "logo @contract"
+
+#: includes/commerce_payline.payments.inc:235
+msgid "Store order and payline order ref doesn't match"
+msgstr "La référence commande Payline et interne ne correspondent pas"
+
+#: includes/commerce_payline.payments.inc:237
+msgid "Payline transaction and Order does not match : attempt to use @token, corresponding to @transaction, to validate @order_id store order"
+msgstr "La transaction Payline ne correspond pas à la commande : tentative de validation de la commande @order_id avec le token @token correspondant à la transaction @transaction"
+
+#: includes/commerce_payline.payments.inc:302
+msgid "Please, choose a payment method"
+msgstr "Veuillez sélectionner votre méthode de paiement"
+
+#: includes/commerce_payline.refund.inc:100
+msgid "Refund return process uncountered unexpected error"
+msgstr "Erreur lors du processus de remboursement"
+
+#: includes/commerce_payline.transaction.inc:102
+msgid "Transaction cancelled by yourself"
+msgstr "Transaction annulée par le commerçant"
+
+#: includes/commerce_payline.transaction.inc:114
+msgid "We are sorry, your transaction has been refused."
+msgstr "Désolé, votre paiement est refusé."
+
+#: modules/commerce_payline_ui/commerce_payline_ui.module:22
+msgid "Refund (Payline)"
+msgstr "Remboursement (Payline)"
+
+#: modules/commerce_payline_ui/commerce_payline_ui.info:0 modules/commerce_payline_wp/commerce_payline_wp.info:0
+msgid "Monext Payline WebPayment"
+msgstr "Paiement web via Payline par Monext"
+
+#: modules/commerce_payline_ui/commerce_payline_ui.info:0
+msgid "Implements Monext Payline UI function"
+msgstr "Implémentation de l'IHM Payline"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.admin.inc:19
+msgid "Refund transaction @transaction_id for order @order_id"
+msgstr "Remboursement de la transaction @transaction_id pour la commande @order_id"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.admin.inc:61
+msgid "Items manager"
+msgstr "Gestion des articles"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.admin.inc:66
+msgid "Refund Type"
+msgstr "Type de remboursement"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.admin.inc:73
+msgid "Refund without remove items"
+msgstr "Rembourser sans retirer les articles"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.admin.inc:74
+msgid "Do you want perform a refund without remove any items ?"
+msgstr "Voulez-vous procéder au remboursement sans retirer aucun article ?"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.admin.inc:89
+msgid "Amount to refund"
+msgstr "Montant à rembourser"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.admin.inc:114
+msgid "Remove items you want to refund (check remove checkbox or decrease quantity)."
+msgstr "Indiquez les articles qui NE seront PAS remboursés en cochant la case ou en modifiant la quantité"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.admin.inc:126
+msgid "Order status"
+msgstr "Statut de commande"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.admin.inc:132
+msgid "Status after refund"
+msgstr "Statut après remboursement"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.admin.inc:135
+msgid "Which status order will be get afer you perform refund"
+msgstr "Statut attribué à la commande après un remboursement"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.admin.inc:144
+msgid "Update log message"
+msgstr "Mettre à jour la trace"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.admin.inc:145
+msgid "Provide an explanation of the changes you are making. This will provide a meaningful audit trail for updates to this order."
+msgstr "Détaillez le changement opéré. Cela permettra une bonne traçabilité sur cette commande."
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.admin.inc:149
+msgid "Confirm transaction refund (payline transaction : @remote_id) for order @order_id"
+msgstr "Confirmez le remboursement de la transaction @remote_id pour la commande @order_id"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.admin.inc:151
+msgid "Are you sure to want to refund a part of this order ?"
+msgstr "Confirmez-vous le remboursement partiel de cette commande ?"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.admin.inc:152
+msgid "Refund"
+msgstr "Remboursement"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.admin.inc:169
+msgid "Fill the amount you want to refund for this order - any line item will be removed."
+msgstr "Indiquez le montant à rembourser pour cette commande. Aucun article ne sera affecté."
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.admin.inc:196
+msgid "Amount to refund is greater than orginal amount"
+msgstr "Le montant du remboursement est suppérieur au montant initial"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.admin.inc:209
+msgid "Qantity of product is greater than original quantity"
+msgstr "Le nombre d'articles est suppérieur au nombre initial"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.admin.inc:218
+msgid "You have perform no refund operation"
+msgstr "Aucun remboursement n'a été effectué"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:24
+msgid "Payline Global Access"
+msgstr "Connexion à Payline"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:27
+msgid "Set your payline global access (merchant id, access key and target environnement"
+msgstr "Indiquez vos paramètres de connexion à Payline : identifiant commerçant, clé d'accès et environnement"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:31
+msgid "Merchand ID"
+msgstr "Identifiant commerçant"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:32
+msgid "Your payline merchant id"
+msgstr "Votre identifiant commerçant Payline"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:38
+msgid "Access Key"
+msgstr "Clé d'accès"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:39
+msgid "Your payline access key"
+msgstr "Votre clé d'accès aux web services Payline"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:45
+msgid "Target environnement"
+msgstr "Environnement cible"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:47
+msgid "Homologation"
+msgstr "Homologation"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:48
+msgid "Production"
+msgstr "Production"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:50
+msgid "Your payline environnement"
+msgstr "Environnement Payline"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:57
+msgid "Proxy"
+msgstr "Proxy"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:60
+msgid "Set your proxy environnement"
+msgstr "Indiquez vos paramètres proxy"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:63
+msgid "Proxy Host"
+msgstr "Hôte proxy"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:64
+msgid "Your proxy host"
+msgstr "Le serveur du proxy HTTP"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:69
+msgid "Proxy Port"
+msgstr "Port"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:70
+msgid "Your proxy port"
+msgstr "Le port utilisé par votre proxy HTTP"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:75
+msgid "Proxy User"
+msgstr "Utilisateur"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:76
+msgid "Your proxy user"
+msgstr "Votre login pour les connexion via le proxy HTTP"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:81
+msgid "Proxy Password"
+msgstr "Mot de passe"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:82
+msgid "Your proxy password"
+msgstr "Votre mot de passe pour les connexion via le proxy HTTP"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:89
+msgid "Contracts"
+msgstr "Contrats"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:92
+msgid "Set your payline contracts"
+msgstr "Renseignez vos contrats Payline"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:113
+msgid "Primary"
+msgstr "Primaire"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:118
+msgid "Secondary"
+msgstr "Secondaire"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:126
+msgid "Customisations"
+msgstr "Personnalisations"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:129
+msgid "Set your custom payment pages"
+msgstr "Personnalisez votre page de paiement"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:132
+msgid "Description"
+msgstr "Description"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:133
+msgid "You can set a description for this payment method. It will be displayed on checkout form"
+msgstr "Renseignez une description pour cette méthode de paiement. Elle sera affichée lors du processus de commande"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:138
+msgid "Template URL"
+msgstr "URL template"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:139
+msgid "Payment page's template url"
+msgstr "URL du template de personnaliation des pages Payline"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:144
+msgid "Customisation Id"
+msgstr "Identifiant de personnalisation"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:165
+msgid "You have to choose at least one primary contracts"
+msgstr "Vous devez renseigner au moins un contrat primaire"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:203
+msgid "custom template url : @templateUrl"
+msgstr "URL template : @templateUrl"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:207
+msgid "Customisation ID : @customisationID"
+msgstr "Identifiant de personnalisation : @customisationID"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:210 modules/commerce_payline_wp/commerce_payline_wp.module:22
+msgid "Your drupal commerce site is plugged on payline test environnement"
+msgstr "Votre site utilise l'environnement Payline de test"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:263;274
+msgid "At least one of your contracts contract number is incorrect"
+msgstr "Un de vos numéros de contrats est incorrect"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:270
+msgid "Your custom payment page code is not valid"
+msgstr "Votre code de personnalisation est incorrect"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:278
+msgid "Template URL : Must be an https:// url on port 443"
+msgstr "l'URL template doit être en https"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:197
+msgid "@count primary contract is setted"
+msgid_plural "@count primary contracts are setted"
+msgstr[0] "@count contrat primaire est configuré"
+msgstr[1] "@count contrats primaires sont configurés"
+
+#: modules/commerce_payline_ui/includes/commerce_payline_ui.form.inc:199
+msgid "@count secondary contract is setted"
+msgid_plural "@count secondary contracts are setted"
+msgstr[0] "@count contrat secondaire est configuré"
+msgstr[1] "@count contrats secondaires sont configurés"
+
+#: modules/commerce_payline_wp/commerce_payline_wp.module:40
+msgid "Payline Immediat Web Payment"
+msgstr "Paiement web comptant"
+
+#: modules/commerce_payline_wp/commerce_payline_wp.module:43
+msgid "Monext Payline Immediat Web Payment"
+msgstr "Paiement web comptant via Payline par Monext"
+
+#: modules/commerce_payline_wp/commerce_payline_wp.info:0
+msgid "Implements Monext Payline off site service in Drupal Commerce checkout."
+msgstr "Implémentation de Payline dans le processus de commande Drupal Commerce."
+
